@@ -5,11 +5,52 @@ def solve(board):
         
         board, possibleNumbers, madeProgress = solveOnes(board, possibleNumbers)
         
-        if not madeProgress:  
+        if not madeProgress:
             break
 
+    if not checkSolved(board): 
+        if not fullSolve(board, possibleNumbers):
+            print("No solution exists!")
+            
+    return board        
+
+def checkSolved(board):
+    for i in range(9):
+        for j in range(9):
+            if board[i][j] == 0:
+                return False
     
-    return board
+    return True
+
+def fullSolve(board, possibleNumbers):
+    
+    if checkSolved(board):
+        return True
+
+    
+    emptyCell = None
+    for i in range(9):
+        for j in range(9):
+            if board[i][j] == 0:
+                emptyCell = (i, j)
+                break
+        if emptyCell:
+            break
+
+    if not emptyCell:
+        return False  
+    
+    i, j = emptyCell
+    for num in possibleNumbers[(i, j)]:  
+        board[i][j] = num
+        rowNumbers, columnNumbers, squareNumbers = usedNumbers(board)
+        newPossibleNumbers = generatePossibleNumber(board, rowNumbers, columnNumbers, squareNumbers)
+        if fullSolve(board, newPossibleNumbers):
+            return True
+        board[i][j] = 0  
+
+    return False
+
 
 def solveOnes(board, possibleNumbers):
     madeProgress = False
@@ -85,5 +126,16 @@ sudoku_board = [
     [0, 0, 5, 0, 1, 0, 3, 0, 0]
 ]
 
+sudoku_board = [
+    [8, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 3, 6, 0, 0, 0, 0, 0],
+    [0, 7, 0, 0, 9, 0, 2, 0, 0],
+    [0, 5, 0, 0, 0, 7, 0, 0, 0],
+    [0, 0, 0, 0, 4, 5, 7, 0, 0],
+    [0, 0, 0, 1, 0, 0, 0, 3, 0],
+    [0, 0, 1, 0, 0, 0, 0, 6, 8],
+    [0, 0, 8, 5, 0, 0, 0, 1, 0],
+    [0, 9, 0, 0, 0, 0, 4, 0, 0]
+]
 
 print(solve(sudoku_board))
